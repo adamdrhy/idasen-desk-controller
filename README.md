@@ -26,7 +26,7 @@ server.py    # Flask WebSocket backend
 
 ### Changing the sit / stand positions
 
-Edit the `POSITIONS` dictionary near the top of **server.py** (values in metres):
+Edit the `POSITIONS` dictionary near the top of **server.py** (values in centimetres):
 
 ```python
 POSITIONS = {
