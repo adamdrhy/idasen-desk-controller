@@ -46,7 +46,7 @@ Restart the server after any change.
 * IKEA Idasen desk (Bluetooth LE)
 
 The printable mount (STL and Fusion 360) is hosted on Thingiverse:  
-<https://www.thingiverse.com/your_thing_link_here>
+<https://www.thingiverse.com/thing:7103519>
 
 ---
 
