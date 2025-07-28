@@ -20,7 +20,7 @@ server.py    # Flask WebSocket backend
 
 | Layer          | Description |
 |----------------|-------------|
-| **idasen**     | Python library that handles BLE; exposes `get_height()` and `move_to_target()`. Protocol details: <https://github.com/timvisee/idasen-controller>. |
+| **idasen**     | Python library that handles BLE; exposes `get_height()` and `move_to_target()`. Protocol details: <https://github.com/newAM/idasen>. |
 | **server.py**  | Starts Flask on **0.0.0.0:8000**.<br>• `GET /` serves the UI.<br>• `WS /ws` streams height (cm) and accepts `{"action":"move","target":"sit"|"stand"}`.<br>• `POST /backlight` writes to `/sys/class/backlight/<device>/bl_power` (`0` = on, `1` = dim). |
 | **index.html** | Connects to `/ws`, shows current height, and offers two preset buttons. The eye icon overlays a black pane and calls `/backlight` to dim or restore the panel. |
 
