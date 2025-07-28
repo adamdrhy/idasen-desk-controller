@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Desk 5389</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      font-family: "DS-Digital", monospace;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      touch-action: none;
+      cursor: none;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 10%;
+      padding: 0 2%;
+      background: #000;
+      color: #fff;
+      font-family: sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .status {
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      height: 90%;
+    }
+
+    .left,
+    .right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .divider {
+      width: 1px;
+      background: #444;
+      height: 95%;
+      align-self: center;
+    }
+
+    .height-display {
+      font-size: 18vh;
+    }
+
+    .label {
+      font-family: sans-serif;
+      font-size: 6vh;
+      color: #aaa;
+      margin-top: 1vh;
+    }
+
+    .position-button {
+      background: #333;
+      padding: 3%;
+      margin: 3% 0;
+      width: 80%;
+      text-align: center;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #blackout {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      display: none;
+      z-index: 9999;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      font-family: sans-serif;
+      font-size: 0.9rem;
+      z-index: 10000;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div id="blackout"></div>
+  <div id="popup" class="popup">Impossible to reach position (Device Disconnected)</div>
+
+  <header>
+    <div>
+      Desk 5389 <span id="statusText" class="status">Connecting...</span>
+    </div>
+    <img id="toggleButton" src="eye.svg" width="48">
+  </header>
+
+  <div class="container">
+    <div class="left">
+      <div id="currentHeight" class="height-display">
+        0.00<span style="font-size:0.4em;">cm</span>
+      </div>
+      <div class="label">current height</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="right">
+      <div class="position-button" data-target="sit">
+        <div id="sitHeight" class="height-display">
+          66.00<span style="font-size:0.4em;">cm</span>
+        </div>
+        <div class="label">Sitting position</div>
+      </div>
+
+      <div class="position-button" data-target="stand">
+        <div id="standHeight" class="height-display">
+          102.0<span style="font-size:0.4em;">cm</span>
+        </div>
+        <div class="label">Standing position</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    //grab DOM elements
+    const statusText = document.getElementById("statusText");
+    const currentHeightEl = document.getElementById("currentHeight");
+    const blackout = document.getElementById("blackout");
+    const popup = document.getElementById("popup");
+    const toggleButton = document.getElementById("toggleButton");
+
+    let socket;
+    let currentHeight = 0;
+    let animationInterval;
+
+    //preset positions
+    const positions = {
+      sit: 66.0,
+      stand: 102.0
+    };
+
+    //update status indicator
+    function setStatus(state) {
+      const states = {
+        connecting: { text: "Connecting...", color: "gray" },
+        connected: { text: "Connected", color: "limegreen" },
+        disconnected: { text: "Disconnected", color: "red" }
+      };
+
+      const s = states[state] || states.connecting;
+      statusText.textContent = s.text;
+      statusText.style.color = s.color;
+    }
+
+    //open WebSocket and handle events
+    function connectWebSocket() {
+      setStatus("connecting");
+
+      socket = new WebSocket(`ws://${location.hostname}:8000/ws`);
+
+      //on open
+      socket.onopen = () => setStatus("connecting");
+
+      //on message receive
+      socket.onmessage = (e) => {
+        clearInterval(animationInterval);
+
+        currentHeight = parseFloat(e.data);
+        displayHeight(currentHeight);
+        setStatus("connected");
+      };
+
+      //on close
+      socket.onclose = () => {
+        setStatus("disconnected");
+        setTimeout(connectWebSocket, 3000);
+      };
+
+      //on error
+      socket.onerror = () => {
+        setStatus("disconnected");
+        socket.close();
+      };
+    }
+
+    //update displayed height
+    function displayHeight(height) {
+      const formatted = height >= 100 ? height.toFixed(1) : height.toFixed(2);
+      currentHeightEl.innerHTML = `${formatted}<span style="font-size:0.4em;">cm</span>`;
+    }
+
+    //simulate smooth movement to target
+    function animateTo(targetHeight) {
+      const diff = targetHeight - currentHeight;
+      const speed = diff > 0 ? 2.648 : 2.858;
+      const stepTime = 100;
+      const step = speed * (stepTime / 1000);
+
+      animationInterval = setInterval(() => {
+        const delta = targetHeight - currentHeight;
+
+        if (Math.abs(delta) <= step) {
+          currentHeight = targetHeight;
+          clearInterval(animationInterval);
+        } else {
+          currentHeight += Math.sign(delta) * step;
+        }
+
+        displayHeight(currentHeight);
+      }, stepTime);
+    }
+
+    //bind position buttons
+    document.querySelectorAll(".position-button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (statusText.textContent !== "Connected") {
+          showPopup("Impossible to reach position (Device Disconnected)");
+          return;
+        }
+
+        const target = btn.dataset.target;
+        const dest = positions[target];
+
+        setTimeout(() => {
+          animateTo(dest);
+        }, 800);
+
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(
+            JSON.stringify({
+              action: "move",
+              target
+            })
+          );
+        }
+      });
+    });
+
+    //toggle blackout overlay
+    toggleButton.addEventListener("click", () => {
+      blackout.style.display = "block";
+      updateBacklight(false);
+    });
+
+    blackout.addEventListener("click", () => {
+      blackout.style.display = "none";
+      updateBacklight(true);
+    });
+
+    //send backlight command
+    function updateBacklight(on) {
+      fetch("/backlight", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ on })
+      }).catch(() => {});
+    }
+
+    //show pop-up message briefly
+    function showPopup(message) {
+      popup.textContent = message;
+      popup.style.display = "block";
+
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
+
+    //start WS connection
+    connectWebSocket();
+  </script>
+</body>
+</html>
