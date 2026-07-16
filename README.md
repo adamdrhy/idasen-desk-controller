@@ -49,8 +49,7 @@ Restart the server after any change.
 * Waveshare 4.3″ 800 × 480 DSI touchscreen (other screens require CSS & mount changes)
 * IKEA Idasen desk (Bluetooth LE)
 
-The printable mount (STL and Fusion 360) is hosted on Thingiverse:  
-<https://www.thingiverse.com/thing:7103519>
+The printable mount (STL + Fusion 360 source) is available on **[Thingiverse](https://www.thingiverse.com/thing:7103519)**.
 
 ---
 
