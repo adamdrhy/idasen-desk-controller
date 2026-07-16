@@ -1,7 +1,7 @@
 # Idasen‑Desk‑Controller
 
 <p align="center">
-<img src="desk.jpg" width="700">
+<img src="desk.jpg" >
 </p>
 
 Local touchscreen interface for the IKEA Idasen sit/stand desk.  
