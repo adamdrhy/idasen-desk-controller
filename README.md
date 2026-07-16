@@ -1,9 +1,5 @@
 # Idasen‑Desk‑Controller
 
-<p align="center">
-<img src="desk.jpeg" width="500">
-</p>
-
 Local touchscreen interface for the IKEA Idasen sit/stand desk.  
 Runs on a Raspberry Pi and controls the desk over Bluetooth LE through a minimal Flask + WebSocket backend.  
 Designed around a Waveshare 4.3″ 800 × 480 screen mounted in a custom 3‑D printed bracket.
