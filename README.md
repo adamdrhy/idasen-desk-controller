@@ -1,5 +1,9 @@
 # Idasen‑Desk‑Controller
 
+<p align="center">
+<img src="images/desk.jpg" width="700">
+</p>
+
 Local touchscreen interface for the IKEA Idasen sit/stand desk.  
 Runs on a Raspberry Pi and controls the desk over Bluetooth LE through a minimal Flask + WebSocket backend.  
 Designed around a Waveshare 4.3″ 800 × 480 screen mounted in a custom 3‑D printed bracket.
@@ -53,14 +57,35 @@ The printable mount (STL and Fusion 360) is hosted on Thingiverse:
 ## Installation
 
 ```bash
-git clone https://github.com/<your-user>/idasen-desk-controller.git
+git clone https://github.com/adamdrhy/idasen-desk-controller.git
 cd idasen-desk-controller
 python3 -m venv venv
 source venv/bin/activate
 pip install flask flask-sock idasen
 ```
+> ⚠️ **Important:** Before running the server for the first time, complete the **Configuration** section below.
 
 **Run the backend as root** (`sudo`) or back‑light control will fail.
+
+## Configuration
+
+Before running the application, edit the MAC_ADDRESS constant near the top of `server.py` and replace the placeholder Bluetooth MAC address with the MAC address of your own IKEA IDÅSEN desk:
+
+```python
+MAC_ADDRESS = "YOUR_IDASEN_MAC_ADDRESS"
+```
+
+For example:
+
+```python
+MAC_ADDRESS = "AA:BB:CC:DD:EE:FF"
+```
+
+If you do not know your desk's Bluetooth MAC address, follow the discovery instructions provided by the `idasen` library:
+
+https://github.com/newAM/idasen
+
+Save the file before starting the server.
 
 ### Manual test
 
