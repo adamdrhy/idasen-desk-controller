@@ -7,7 +7,7 @@ from idasen import IdasenDesk
 import os
 
 #preset positions (in meters)
-MAC_ADDRESS = "E8:77:15:32:3C:1D"
+MAC_ADDRESS = "YOUR_IDASEN_MAC_ADRESS"
 POSITIONS = {"sit": 0.66, "stand": 1.02}
 
 #configure Flask app and WebSocket
